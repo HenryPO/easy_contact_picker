@@ -28,18 +28,20 @@ public class EasyContactPickerPlugin implements MethodCallHandler, PluginRegistr
   // 获取联系人列表
   static final String METHOD_CALL_LIST = "selectContactList";
   private Activity mActivity;
+  private Context mContext;
   private ContactsCallBack contactsCallBack;
 
   // 加个构造函数，入参是Activity
-  private EasyContactPickerPlugin(Activity activity) {
+  private EasyContactPickerPlugin(Activity activity,Context context) {
     // 存起来
     mActivity = activity;
+    mContext = context;
   }
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     //传入Activity
-    final EasyContactPickerPlugin plugin = new EasyContactPickerPlugin(registrar.activity());
+    final EasyContactPickerPlugin plugin = new EasyContactPickerPlugin(registrar.activity(),registrar.context());
     final MethodChannel channel = new MethodChannel(registrar.messenger(), CHANNEL);
     channel.setMethodCallHandler(plugin);
     //添加跳转页面回调
@@ -106,7 +108,7 @@ public class EasyContactPickerPlugin implements MethodCallHandler, PluginRegistr
       uri = ContactsContract.CommonDataKinds.Contactables.CONTENT_URI;
     }
     //获取联系人。按首字母排序
-    Cursor cursor = mActivity.getContentResolver().query(uri, CONTACTOR_ION,null,null, ContactsContract.CommonDataKinds.Phone.SORT_KEY_PRIMARY);
+    Cursor cursor = mContext.getContentResolver().query(uri, CONTACTOR_ION,null,null, ContactsContract.CommonDataKinds.Phone.SORT_KEY_PRIMARY);
     if (cursor != null) {
 
       while (cursor.moveToNext()) {
